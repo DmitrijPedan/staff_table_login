@@ -1,0 +1,69 @@
+header {
+  background-color: #6085b1;
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+header .col {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header-logo {
+  display: flex;
+  color: #ffc107;
+  text-transform: uppercase;
+}
+
+.header-login span {
+  margin: 10px;
+  color: #fff;
+}
+.header-login button {
+  margin: 0px 5px;
+}
+
+footer {
+  width: 100%;
+  margin-top: 30px;
+  position: fixed;
+  bottom: 0;
+  text-align: center;
+  background-color: #6085b1;
+  color: #fff;
+}
+
+.form-group {
+  margin-bottom: 30px;
+}
+.form-group__title {
+  text-align: center;
+  color: #6085b1;
+}
+.form-group__btn {
+  margin: 5px 5px 30px 5px;
+}
+
+.passwordWrapper {
+  position: relative;
+}
+.passwordWrapper button {
+  position: absolute;
+  top: 1px;
+  right: 30px;
+  height: 37px;
+  border: none;
+  background: transparent;
+}
+.passwordWrapper button:focus {
+  outline: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.table-title {
+  text-align: center;
+}
