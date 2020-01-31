@@ -41,6 +41,9 @@ footer {
   text-align: center;
   color: #6085b1;
 }
+.form-group__title p {
+  color: #6085b1;
+}
 .form-group__btn {
   margin: 5px 5px 30px 5px;
 }
@@ -66,4 +69,20 @@ footer {
 
 .table-title {
   text-align: center;
+}
+
+.th-cols-flat:after {
+  content: '  \2192';
+}
+
+.th-cols-down:after {
+  content: '  \2193';
+}
+
+.th-cols-up:after {
+  content: '  \2191';
+} */
+
+th {
+  cursor: pointer;
 }

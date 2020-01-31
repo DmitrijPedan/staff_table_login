@@ -8,16 +8,16 @@ const userArray = [
 ];
 
 const stuff = [
-    { id: 1, fullName: 'Oleh Lev', position: 'Web Dev', skill: 'PHP,JS', exp: 3, sex: 'Male', salary: 4500 },
-    { id: 2, fullName: 'John White', position: 'Web Dev', skill: 'PHP', exp: 1, sex: 'Male', salary: 1200 },
-    { id: 3, fullName: 'Jany Rad', position: 'Sale', skill: '-', exp: 2, sex: 'Famale', salary: 3500 },
-    { id: 4, fullName: 'Ivan Brown', position: 'iOS', skill: 'Swift', exp: 3, sex: 'Male', salary: 4000 },
-    { id: 5, fullName: 'Pet Bool', position: 'Android', skill: 'Java', exp: 2, sex: 'Male', salary: 3520 },
-    { id: 6, fullName: 'Emma Hallo', position: 'Android', skill: 'Kotlin', exp: 1, sex: 'Famale', salary: 2520 },
-    { id: 7, fullName: 'Olivia Jones', position: 'iOS', skill: 'Objective-C', exp: 3, sex: 'Famale', salary: 2820 },
-    { id: 8, fullName: 'William Smith', position: 'Designer', skill: '-', exp: 5, sex: 'Male', salary: 3000 },
-    { id: 9, fullName: 'Oliver Alien', position: 'PM', skill: '-', exp: 4, sex: 'Male', salary: 6000 },
-    { id: 10, fullName: 'Mia Morris', position: 'Owner', skill: '-', exp: 10, sex: 'Famale', salary: 10000 },
+    { id: 1, fullName: 'Oleh Lev', position: 'Web Dev', skill: 'PHP,JS', exp: 3, sex: 'Male', salary: 4500},
+    { id: 2, fullName: 'John White', position: 'Web Dev', skill: 'PHP', exp: 1, sex: 'Male', salary: 1200},
+    { id: 3, fullName: 'Jany Rad', position: 'Sale', skill: '-', exp: 2, sex: 'Famale', salary: 3500},
+    { id: 4, fullName: 'Ivan Brown', position: 'iOS', skill: 'Swift', exp: 3, sex: 'Male', salary: 4000},
+    { id: 5, fullName: 'Pet Bool', position: 'Android', skill: 'Java', exp: 2, sex: 'Male', salary: 3520},
+    { id: 6, fullName: 'Emma Hallo', position: 'Android', skill: 'Kotlin', exp: 1, sex: 'Famale', salary: 2520},
+    { id: 7, fullName: 'Olivia Jones', position: 'iOS', skill: 'Objective-C', exp: 3, sex: 'Famale', salary: 2820},
+    { id: 8, fullName: 'William Smith', position: 'Designer', skill: '-', exp: 5, sex: 'Male', salary: 3000},
+    { id: 9, fullName: 'Oliver Alien', position: 'PM', skill: '-', exp: 4, sex: 'Male', salary: 6000},
+    { id: 10, fullName: 'Mia Morris', position: 'Owner', skill: '-', exp: 10, sex: 'Famale', salary: 10000},
 ];
 
 // render DOM
@@ -62,8 +62,9 @@ const renderFooterNode = () => {
 };
 
 const renderAuthorizationNode = () => {
-    const title = createHTMLNode ('div', [], [
-        createHTMLNode ('h4', [{name: 'class', value:['form-group__title']}], 'Авторизация (admin@gmail.com, 00000)'),
+    const title = createHTMLNode ('div', [{name: 'class', value:['form-group__title']}], [
+        createHTMLNode ('h4', [], 'Авторизация'),
+        createHTMLNode ('p', [], '(admin@gmail.com, 00000)')
     ]);
     const formGroup1 = createHTMLNode ('div', [{name: 'class', value:['form-group']}], [
         createHTMLNode ('label', [{name: 'for', value:['emailInput']}], 'Email:'),
@@ -91,15 +92,15 @@ const renderMessageAuthorizationNode = () => {
     document.getElementById('outputAuthorization').appendChild(message);
 }
 
-// table render
-
 const columns = ['ID', 'Full Name', 'Position', 'Tech', 'Exp', 'Sex', 'Salary'];
 const slug = text => text.trim().split(' ').map(el => el.toLowerCase()).join('-');
+
+//th-cols-up
 
 const renderTableNode = (headCols, dataRows) => {
     document.getElementById('outputData').innerHTML = '';
     const trHead = createHTMLNode('tr', [], null);
-    headCols.map(el => trHead.appendChild(createHTMLNode('th', [{ name: 'id', value: [slug(el)] }], el)));
+    headCols.map(el => trHead.appendChild(createHTMLNode('th', [{ name: 'id', value: [slug(el)]}, { name: 'class', value: ['th-cols-flat']}], el)));
     const thead = createHTMLNode('thead', [], [trHead]);
     const tbody = createHTMLNode('tbody', [], null);
     dataRows.map(el => {
@@ -119,6 +120,27 @@ const renderTableNode = (headCols, dataRows) => {
     document.getElementById('outputData').appendChild(container);
 }
 
+const renderUserMessage = (type, text) => {
+    const div = createHTMLNode ('div', [{name: `class`, value:[`alert`, `alert-${type}`]}], `${text}`);
+    document.getElementById('outputData').innerHTML = "";
+    document.getElementById('outputData').appendChild(div);
+    (setTimeout(() => document.getElementById('outputData').innerHTML = "", 3000));
+}
+
+// functions
+
+const removeSpacesFromString = str => str.split('').filter(el => el !== ' ').join('');
+
+const isPasswordValid = (password) => {
+    removeSpacesFromString(password).length >= 5 ? res = true : res = false ;
+    return res;
+}
+
+const isEmailValid = (email) => {
+    let at = email.split('').filter(el => el !== ' ' && el == '@');
+    removeSpacesFromString(email).length > 3 && at.length == 1 ? res = true : res = false ;
+    return res;
+}
 
 const hideAuthorization = () => {
     logInBtn.classList.add('hidden');
@@ -137,10 +159,125 @@ const checkLoginStatus = () => {
         outputUserName.innerHTML = localStorage.getItem('auth');
         hideAuthorization();
         renderTableNode(columns,stuff);
+        addEvListenerToTable();
     } else {
         showAuthorization();
     }
 }
+
+
+//sorting functions
+
+const idHandleClick = () => {
+    stuff.sort((a,b) => (stuff[0].id > stuff[1].id) ? a.id - b.id : b.id - a.id);
+    removeEvListenerFromTable()
+    renderTableNode(columns, stuff);
+    addEvListenerToTable();
+}
+
+const fullNameHandleClick = () => {
+    stuff.sort((a,b) => {
+        if (stuff[0].fullName < stuff[stuff.length - 1].fullName) {
+            return a.fullName.toLowerCase() < b.fullName.toLowerCase() ? 1 : a.fullName.toLowerCase() > b.fullName.toLowerCase() ? -1 : 0;
+        }
+        else {
+            return a.fullName.toLowerCase() < b.fullName.toLowerCase() ? -1 : a.fullName.toLowerCase() > b.fullName.toLowerCase() ? 1 : 0;
+        }
+    });
+    removeEvListenerFromTable();
+    renderTableNode(columns, stuff);
+    addEvListenerToTable();
+}
+
+const genderHandleClick = () => {
+    stuff.sort((a,b) => {
+        if (stuff[0].sex < stuff[stuff.length - 1].sex) {
+            return a.sex.toLowerCase() < b.sex.toLowerCase() ? 1 : a.sex.toLowerCase() > b.sex.toLowerCase() ? -1 : 0;
+        }
+        else {
+            return a.sex.toLowerCase() < b.sex.toLowerCase() ? -1 : a.sex.toLowerCase() > b.sex.toLowerCase() ? 1 : 0;
+        }
+    });
+    removeEvListenerFromTable();
+    renderTableNode(columns, stuff);
+    addEvListenerToTable();
+}
+
+const positionHandleClick = () => {
+    stuff.sort((a,b) => {
+        if (stuff[0].position < stuff[stuff.length - 1].position) {
+            return a.position.toLowerCase() < b.position.toLowerCase() ? 1 : a.position.toLowerCase() > b.position.toLowerCase() ? -1 : 0;
+        }
+        else {
+            return a.position.toLowerCase() < b.position.toLowerCase() ? -1 : a.position.toLowerCase() > b.position.toLowerCase() ? 1 : 0;
+        }
+    });
+    removeEvListenerFromTable();
+    renderTableNode(columns, stuff);
+    addEvListenerToTable();
+}
+
+const techHandleClick = () => {
+    stuff.sort((a,b) => {
+        if (stuff[0].skill < stuff[stuff.length - 1].skill) {
+            return a.skill.toLowerCase() < b.skill.toLowerCase() ? 1 : a.skill.toLowerCase() > b.skill.toLowerCase() ? -1 : 0;
+        }
+        else {
+            return a.skill.toLowerCase() < b.skill.toLowerCase() ? -1 : a.skill.toLowerCase() > b.skill.toLowerCase() ? 1 : 0;
+        }
+    });
+    removeEvListenerFromTable();
+    renderTableNode(columns, stuff);
+    addEvListenerToTable();
+}
+
+const expHandleClick = () => {
+    stuff.sort((a,b) => (stuff[0].exp > stuff[1].exp) ? a.exp - b.exp : b.exp - a.exp);
+    removeEvListenerFromTable();
+    renderTableNode(columns, stuff);
+    addEvListenerToTable();
+}
+
+const salaryHandleClick = () => {
+    stuff.sort((a,b) => (stuff[0].salary > stuff[1].salary) ? a.salary - b.salary : b.salary - a.salary);
+    removeEvListenerFromTable();
+    renderTableNode(columns, stuff);
+    addEvListenerToTable();
+}
+
+function addEvListenerToTable () {
+    document.getElementById('id').addEventListener('click', idHandleClick);
+    document.getElementById('full-name').addEventListener('click', fullNameHandleClick);
+    document.getElementById('position').addEventListener('click', positionHandleClick);
+    document.getElementById('tech').addEventListener('click', techHandleClick);
+    document.getElementById('exp').addEventListener('click', expHandleClick);
+    document.getElementById('sex').addEventListener('click', genderHandleClick);
+    document.getElementById('salary').addEventListener('click', salaryHandleClick);
+}
+
+function removeEvListenerFromTable () {
+    document.getElementById('id').removeEventListener('click', idHandleClick);
+    document.getElementById('full-name').removeEventListener('click', fullNameHandleClick);
+    document.getElementById('position').removeEventListener('click', positionHandleClick);
+    document.getElementById('tech').removeEventListener('click', techHandleClick);
+    document.getElementById('exp').removeEventListener('click', idHandleClick);
+    document.getElementById('sex').removeEventListener('click', genderHandleClick);
+    document.getElementById('salary').removeEventListener('click', salaryHandleClick);
+}
+
+
+
+////////////////////////////////////
+
+
+// const addEvListenerToTable = () => {
+//     const id = document.getElementById('id');
+//     const salary = document.getElementById('salary');
+//     id.addEventListener('click', handleIdClick);
+//     salary.addEventListener('click', handleSalaryClick);
+// }
+
+//main app
 
 renderHeaderNode();
 renderMainSectionNode();
@@ -156,30 +293,7 @@ const passwordInput = document.getElementById('passwordInput');
 const submitBtn = document.getElementById('submitBtn');
 const seePassword = document.getElementById('seePassword');
 
-
 checkLoginStatus();
-
-// logIn and LogOut components
-
-const renderUserMessage = (type, text) => {
-    const div = createHTMLNode ('div', [{name: `class`, value:[`alert`, `alert-${type}`]}], `${text}`);
-    document.getElementById('outputData').innerHTML = "";
-    document.getElementById('outputData').appendChild(div);
-    (setTimeout(() => document.getElementById('outputData').innerHTML = "", 3000));
-}
-
-const removeSpacesFromString = str => str.split('').filter(el => el !== ' ').join('');
-
-const isPasswordValid = (password) => {
-    removeSpacesFromString(password).length >= 5 ? res = true : res = false ;
-    return res;
-}
-
-const isEmailValid = (email) => {
-    let at = email.split('').filter(el => el !== ' ' && el == '@');
-    removeSpacesFromString(email).length > 3 && at.length == 1 ? res = true : res = false ;
-    return res;
-}
 
 logInBtn.addEventListener('click', event => {
     document.getElementById('logInMessage').classList.add('hidden');
@@ -227,7 +341,7 @@ seePassword.addEventListener('click', () => {
     }
 })
 
-loginForm.addEventListener('submit', event => {
+loginForm.addEventListener ('submit', event => {
     event.preventDefault();
     let currentUser = userArray.filter(el => el.email === emailInput.value);
     if (currentUser.length == 1 && currentUser[0].password === passwordInput.value) {
@@ -236,33 +350,10 @@ loginForm.addEventListener('submit', event => {
         loginForm.reset();
         hideAuthorization();
         renderTableNode(columns,stuff);
-        const id = document.getElementById('id');
-        const salary = document.getElementById('salary');
-        id.addEventListener('click', handleIdClick);
-        salary.addEventListener('click', handleSalaryClick);
-
+        addEvListenerToTable();
     } else if (currentUser.length == 1 && currentUser[0].password !== passwordInput.value) {
         renderUserMessage('warning', `${currentUser[0].name}, вы ввели неверный пароль!`) 
-    } 
-    else {
+    } else {
         renderUserMessage('danger', 'Такого пользователя нет в системе');
     }  
 })
-
-
-// sort data on table
-
-const handleIdClick = () => {
-    const sortStuff = stuff.reverse();
-    id.removeEventListener('click', handleIdClick)
-    renderTableNode(columns, sortStuff);
-    document.getElementById('id').addEventListener('click', handleIdClick)
-}
-
-const handleSalaryClick = () => {
-    console.log('sort salary')
-    const sortStuff = stuff.sort((a,b) => (false) ? a.salary - b.salary:b.salary - a.salary);
-    salary.removeEventListener('click', handleSalaryClick);
-    renderTableNode(columns, sortStuff);
-    document.getElementById('salary').addEventListener('click', handleSalaryClick)
-}
