@@ -75,16 +75,19 @@ th {
   cursor: pointer;
 }
 
+ /* \2192 */
 .th-cols-flat:after {
-  content: '  \2192';
+  content: '  \00A0';
 }
 
 .th-cols-down:after {
   content: '  \2193';
+  color: rgb(12, 99, 212);
 }
 
 .th-cols-up:after {
   content: '  \2191';
+  color: red;
 } 
 
 

@@ -15,9 +15,14 @@ const stuff = [
     { id: 5, fullName: 'Pet Bool', position: 'Android', skill: 'Java', exp: 2, sex: 'Male', salary: 3520},
     { id: 6, fullName: 'Emma Hallo', position: 'Android', skill: 'Kotlin', exp: 1, sex: 'Famale', salary: 2520},
     { id: 7, fullName: 'Olivia Jones', position: 'iOS', skill: 'Objective-C', exp: 3, sex: 'Famale', salary: 2820},
-    { id: 8, fullName: 'William Smith', position: 'Designer', skill: '-', exp: 5, sex: 'Male', salary: 3000},
+    { id: 8, fullName: 'William Smith', position: 'Designer', skill: 'Figma', exp: 5, sex: 'Male', salary: 3000},
     { id: 9, fullName: 'Oliver Alien', position: 'PM', skill: '-', exp: 4, sex: 'Male', salary: 6000},
     { id: 10, fullName: 'Mia Morris', position: 'Owner', skill: '-', exp: 10, sex: 'Famale', salary: 10000},
+    { id: 11, fullName: 'Jeremy Clarkson', position: 'Driver', skill: '', exp: 5, sex: 'Male', salary: 2000},
+    { id: 12, fullName: 'Samuel Faber', position: 'Web Dev', skill: '-', exp: 8, sex: 'Male', salary: 6000},
+    { id: 13, fullName: 'Victoria Newton', position: 'Web Dev', skill: 'PHP, JS', exp: 7, sex: 'Famale', salary: 4200},
+    { id: 14, fullName: 'Anastasia Willis', position: 'Android', skill: 'Kotlin', exp: 3, sex: 'Famale', salary: 3200},
+    { id: 15, fullName: 'Lucas Archibald', position: 'Web Dev', skill: 'React', exp: 4, sex: 'Male', salary: 9000},
 ];
 
 const columns = ['ID', 'Full Name', 'Position', 'Tech', 'Exp', 'Sex', 'Salary'];
@@ -154,10 +159,10 @@ const showAuthorization = () => {
 
 const checkLoginStatus = () => {
     if (!!localStorage.getItem('auth')) {
-        outputUserName.innerHTML = localStorage.getItem('auth');
+        document.getElementById('outputUserName').innerHTML = localStorage.getItem('auth');
         hideAuthorization();
         renderTableNode(columns,stuff);
-        addEvListenerToTable();
+        fullNameHandleClick();
     } else {
         showAuthorization();
     }
@@ -262,6 +267,75 @@ const salaryHandleClick = () => {
     changeArrowInSortedTh('salary', flag);
 }
 
+// Authorization functions
+
+const handlerLoginBtn = () => {
+    document.getElementById('logInMessage').classList.add('hidden');
+    loginForm.classList.remove('hidden');
+    logInBtn.setAttribute('disabled', 'disabled');
+}
+
+const handlerLogOutBtn = () => {
+    localStorage.removeItem('auth');
+    window.location.reload();
+}
+
+const handlerEmailInput = () => {
+    event.target.value = removeSpacesFromString(event.target.value);
+    if (isEmailValid(event.target.value)) {
+        event.target.classList.remove('is-invalid');
+        event.target.classList.add('is-valid');
+    } else {
+        event.target.classList.add('is-invalid');
+        event.target.classList.remove('is-valid');
+    }
+}
+
+const handlerPasswordInput = () => {
+    event.target.value = removeSpacesFromString(event.target.value);
+    if (isPasswordValid(event.target.value)) {
+        event.target.classList.remove('is-invalid');
+        event.target.classList.add('is-valid');
+    } else {
+        event.target.classList.add('is-invalid');
+        event.target.classList.remove('is-valid');
+    }
+}
+
+const handlerVisibilityPassw = () => {
+    let attr = passwordInput.getAttribute('type');
+    if (attr === 'password') {
+        passwordInput.setAttribute('type', 'text');
+        seePassword.innerHTML = "";
+        seePassword.appendChild(createHTMLNode ('i', [{name: 'class', value:['fas', 'fa-eye']}], null));
+    } else {
+        seePassword.innerHTML = "";
+        passwordInput.setAttribute('type', 'password');
+        seePassword.innerHTML = "";
+        seePassword.appendChild(createHTMLNode ('i', [{name: 'class', value:['fas', 'fa-eye-slash']}], null));
+    }
+}
+
+const handlerSubmitAuthForm = () => {
+    event.preventDefault();
+    let currentUser = userArray.filter(el => el.email === emailInput.value);
+    if (currentUser.length == 1 && currentUser[0].password === passwordInput.value) {
+        localStorage.setItem('auth', currentUser[0].name);
+        document.getElementById('outputUserName').innerHTML = localStorage.getItem('auth');
+        loginForm.reset();
+        hideAuthorization();
+        removeEvListenerFromAuthorization();
+        renderTableNode(columns,stuff);
+        fullNameHandleClick();
+    } else if (currentUser.length == 1 && currentUser[0].password !== passwordInput.value) {
+        renderUserMessage('warning', `${currentUser[0].name}, вы ввели неверный пароль!`) 
+    } else {
+        renderUserMessage('danger', 'Такого пользователя нет в системе');
+    }  
+}
+
+// Event Listener functions
+
 const addEvListenerToTable = () => {
     document.getElementById('id').addEventListener('click', idHandleClick);
     document.getElementById('full-name').addEventListener('click', fullNameHandleClick);
@@ -282,83 +356,28 @@ const removeEvListenerFromTable = () => {
     document.getElementById('salary').removeEventListener('click', salaryHandleClick);
 }
 
+const addEvListenerToAuthorization = () => {
+    document.getElementById('logInBtn').addEventListener('click', handlerLoginBtn);
+    document.getElementById('logOutBtn').addEventListener('click', handlerLogOutBtn);
+    document.getElementById('loginForm').addEventListener ('submit', handlerSubmitAuthForm);
+    document.getElementById('emailInput').addEventListener('input', handlerEmailInput);
+    document.getElementById('passwordInput').addEventListener('input', handlerPasswordInput);
+    document.getElementById('seePassword').addEventListener('click', handlerVisibilityPassw);
+}
+
+const removeEvListenerFromAuthorization = () => {
+    document.getElementById('logInBtn').removeEventListener('click', handlerLoginBtn);
+    document.getElementById('loginForm').removeEventListener ('submit', handlerSubmitAuthForm);
+    document.getElementById('emailInput').removeEventListener('input', handlerEmailInput);
+    document.getElementById('passwordInput').removeEventListener('input', handlerPasswordInput);
+    document.getElementById('seePassword').removeEventListener('click', handlerVisibilityPassw);
+}
+
 //main app
 
 renderHeaderNode();
 renderMainSectionNode();
 renderAuthorizationNode();
 renderFooterNode();
-
-const logInBtn = document.getElementById('logInBtn');
-const logOutBtn = document.getElementById('logOutBtn');
-const outputUserName = document.getElementById('outputUserName');
-const loginForm = document.getElementById('loginForm');
-const emailInput = document.getElementById('emailInput');
-const passwordInput = document.getElementById('passwordInput');
-const submitBtn = document.getElementById('submitBtn');
-const seePassword = document.getElementById('seePassword');
-
 checkLoginStatus();
-
-logInBtn.addEventListener('click', event => {
-    document.getElementById('logInMessage').classList.add('hidden');
-    loginForm.classList.remove('hidden');
-})
-
-logOutBtn.addEventListener('click', event => {
-    localStorage.removeItem('auth');
-    window.location.reload();
-})
-
-emailInput.addEventListener('input', event => {
-    event.target.value = removeSpacesFromString(event.target.value);
-    if (isEmailValid(event.target.value)) {
-        event.target.classList.remove('is-invalid');
-        event.target.classList.add('is-valid');
-    } else {
-        event.target.classList.add('is-invalid');
-        event.target.classList.remove('is-valid');
-    }
-})
-
-passwordInput.addEventListener('input', event => {
-    event.target.value = removeSpacesFromString(event.target.value);
-    if (isPasswordValid(event.target.value)) {
-        event.target.classList.remove('is-invalid');
-        event.target.classList.add('is-valid');
-    } else {
-        event.target.classList.add('is-invalid');
-        event.target.classList.remove('is-valid');
-    }
-})
-
-seePassword.addEventListener('click', () => {
-    let attr = passwordInput.getAttribute('type');
-    if (attr === 'password') {
-        passwordInput.setAttribute('type', 'text');
-        seePassword.innerHTML = "";
-        seePassword.appendChild(createHTMLNode ('i', [{name: 'class', value:['fas', 'fa-eye']}], null));
-    } else {
-        seePassword.innerHTML = "";
-        passwordInput.setAttribute('type', 'password');
-        seePassword.innerHTML = "";
-        seePassword.appendChild(createHTMLNode ('i', [{name: 'class', value:['fas', 'fa-eye-slash']}], null));
-    }
-})
-
-loginForm.addEventListener ('submit', event => {
-    event.preventDefault();
-    let currentUser = userArray.filter(el => el.email === emailInput.value);
-    if (currentUser.length == 1 && currentUser[0].password === passwordInput.value) {
-        localStorage.setItem('auth', currentUser[0].name);
-        outputUserName.innerHTML = localStorage.getItem('auth');
-        loginForm.reset();
-        hideAuthorization();
-        renderTableNode(columns,stuff);
-        addEvListenerToTable();
-    } else if (currentUser.length == 1 && currentUser[0].password !== passwordInput.value) {
-        renderUserMessage('warning', `${currentUser[0].name}, вы ввели неверный пароль!`) 
-    } else {
-        renderUserMessage('danger', 'Такого пользователя нет в системе');
-    }  
-})
+addEvListenerToAuthorization();
