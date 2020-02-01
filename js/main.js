@@ -1,0 +1,5 @@
+renderHeaderNode();
+renderMainSectionNode();
+renderFooterNode();
+checkLoginStatus();
+

@@ -1,34 +1,5 @@
-//backend data
-const userArray = [
-    {email: 'test@gmail.com', password: '666666', name: 'Дмитрий'},
-    {email: 'alex@gmail.com', password: '666666', name: 'Александр'},
-    {email: 'vlad@gmail.com', password: '666666', name: 'Владислав'},
-    {email: 'anna@gmail.com', password: '666666', name: 'Анна'},
-    {email: 'admin@gmail.com', password: '00000', name: 'Администратор'}
-];
+///////// render HTML Nodes /////////
 
-const stuff = [
-    { id: 1, fullName: 'Oleh Lev', position: 'Web Dev', skill: 'PHP,JS', exp: 3, sex: 'Male', salary: 4500},
-    { id: 2, fullName: 'John White', position: 'Web Dev', skill: 'PHP', exp: 1, sex: 'Male', salary: 1200},
-    { id: 3, fullName: 'Jany Rad', position: 'Sale', skill: '-', exp: 2, sex: 'Famale', salary: 3500},
-    { id: 4, fullName: 'Ivan Brown', position: 'iOS', skill: 'Swift', exp: 3, sex: 'Male', salary: 4000},
-    { id: 5, fullName: 'Pet Bool', position: 'Android', skill: 'Java', exp: 2, sex: 'Male', salary: 3520},
-    { id: 6, fullName: 'Emma Hallo', position: 'Android', skill: 'Kotlin', exp: 1, sex: 'Famale', salary: 2520},
-    { id: 7, fullName: 'Olivia Jones', position: 'iOS', skill: 'Objective-C', exp: 3, sex: 'Famale', salary: 2820},
-    { id: 8, fullName: 'William Smith', position: 'Designer', skill: 'Figma', exp: 5, sex: 'Male', salary: 3000},
-    { id: 9, fullName: 'Oliver Alien', position: 'PM', skill: '-', exp: 4, sex: 'Male', salary: 6000},
-    { id: 10, fullName: 'Mia Morris', position: 'Owner', skill: '-', exp: 10, sex: 'Famale', salary: 10000},
-    { id: 11, fullName: 'Jeremy Clarkson', position: 'Driver', skill: '', exp: 5, sex: 'Male', salary: 2000},
-    { id: 12, fullName: 'Samuel Faber', position: 'Web Dev', skill: '-', exp: 8, sex: 'Male', salary: 6000},
-    { id: 13, fullName: 'Victoria Newton', position: 'Web Dev', skill: 'PHP, JS', exp: 7, sex: 'Famale', salary: 4200},
-    { id: 14, fullName: 'Anastasia Willis', position: 'Android', skill: 'Kotlin', exp: 3, sex: 'Famale', salary: 3200},
-    { id: 15, fullName: 'Lucas Archibald', position: 'Web Dev', skill: 'React', exp: 4, sex: 'Male', salary: 9000},
-];
-
-const columns = ['ID', 'Full Name', 'Position', 'Tech', 'Exp', 'Sex', 'Salary'];
-const slug = text => text.trim().split(' ').map(el => el.toLowerCase()).join('-');
-
-// render DOM
 const createHTMLNode = (tag, attrs, inner) => {
     const element = document.createElement(tag);
     attrs.map(attr => {element.setAttribute(attr.name, attr.value.join(' '))});
@@ -36,12 +7,14 @@ const createHTMLNode = (tag, attrs, inner) => {
     return element;
 };
 
+const slug = text => text.trim().split(' ').map(el => el.toLowerCase()).join('-');
+
 const renderHeaderNode = () => {
     const logo = createHTMLNode ('div', [{name: 'class', value:['header-logo']}], [createHTMLNode ('h3', [], 'Staff table')]);
     const login = createHTMLNode ('div', [{name: 'class', value:['header-login']}], [
         createHTMLNode ('span', [{name: 'id', value:['outputUserName']}], null),
-        createHTMLNode ('button', [{name: 'type', value:['button']}, {name: 'id', value:['logInBtn']}, {name: 'class', value:['btn', 'btn-info']}], 'Log In'),
-        createHTMLNode ('button', [{name: 'type', value:['button']}, {name: 'id', value:['logOutBtn']}, {name: 'class', value:['btn', 'btn-danger', 'hidden']}], 'Log Out'),
+        createHTMLNode ('button', [{name: 'type', value:['button']}, {name: 'id', value:['logInBtn']}, {name: 'class', value:['btn', 'btn-info', 'hidden']}], 'Log In'),
+        createHTMLNode ('button', [{name: 'type', value:['button']}, {name: 'id', value:['logOutBtn']}, {name: 'class', value:['btn', 'btn-danger']}], 'Log Out'),
     ]);
     const col = createHTMLNode ('div', [{name: 'class', value:['col', 'header-col']}], [logo, login])
     const row = createHTMLNode ('div', [{name: 'class', value:['row']}], [col])
@@ -130,7 +103,7 @@ const renderUserMessage = (type, text) => {
     (setTimeout(() => document.getElementById('outputData').innerHTML = "", 3000));
 }
 
-// functions
+///////// authorization functions /////////
 
 const removeSpacesFromString = str => str.split('').filter(el => el !== ' ').join('');
 
@@ -160,15 +133,18 @@ const showAuthorization = () => {
 const checkLoginStatus = () => {
     if (!!localStorage.getItem('auth')) {
         document.getElementById('outputUserName').innerHTML = localStorage.getItem('auth');
-        hideAuthorization();
+        document.getElementById('logOutBtn').addEventListener('click', handlerLogOutBtn);
         renderTableNode(columns,stuff);
-        fullNameHandleClick();
+        fullNameHandleClick(); 
     } else {
+        document.getElementById('logInBtn').addEventListener('click', handlerLoginBtn);
+        renderAuthorizationNode();
         showAuthorization();
+        addEvListenerToAuthorization();
     }
 }
 
-//sorting functions
+///////// sorting functions /////////
 
 const changeArrowInSortedTh = (el, key) => {
     document.getElementById(el).classList.remove('th-cols-flat');
@@ -186,7 +162,6 @@ const idHandleClick = () => {
 
 const fullNameHandleClick = () => {
     const flag = (stuff[0].fullName > stuff[stuff.length - 1].fullName);
-    console.log(flag)
     stuff.sort((a,b) => {
         if (flag) {
             return a.fullName.toLowerCase() < b.fullName.toLowerCase() ? -1 : a.fullName.toLowerCase() > b.fullName.toLowerCase() ? 1 : 0;  
@@ -267,7 +242,7 @@ const salaryHandleClick = () => {
     changeArrowInSortedTh('salary', flag);
 }
 
-// Authorization functions
+///////// handlers authorization functions /////////
 
 const handlerLoginBtn = () => {
     document.getElementById('logInMessage').classList.add('hidden');
@@ -276,6 +251,7 @@ const handlerLoginBtn = () => {
 }
 
 const handlerLogOutBtn = () => {
+    console.log('logout')
     localStorage.removeItem('auth');
     window.location.reload();
 }
@@ -334,7 +310,22 @@ const handlerSubmitAuthForm = () => {
     }  
 }
 
-// Event Listener functions
+///////// Events Listeners functions /////////
+
+const addEvListenerToAuthorization = () => {
+    document.getElementById('logOutBtn').addEventListener('click', handlerLogOutBtn);
+    document.getElementById('loginForm').addEventListener ('submit', handlerSubmitAuthForm);
+    document.getElementById('emailInput').addEventListener('input', handlerEmailInput);
+    document.getElementById('passwordInput').addEventListener('input', handlerPasswordInput);
+    document.getElementById('seePassword').addEventListener('click', handlerVisibilityPassw);
+}
+
+const removeEvListenerFromAuthorization = () => {
+    document.getElementById('loginForm').removeEventListener ('submit', handlerSubmitAuthForm);
+    document.getElementById('emailInput').removeEventListener('input', handlerEmailInput);
+    document.getElementById('passwordInput').removeEventListener('input', handlerPasswordInput);
+    document.getElementById('seePassword').removeEventListener('click', handlerVisibilityPassw);
+}
 
 const addEvListenerToTable = () => {
     document.getElementById('id').addEventListener('click', idHandleClick);
@@ -356,28 +347,3 @@ const removeEvListenerFromTable = () => {
     document.getElementById('salary').removeEventListener('click', salaryHandleClick);
 }
 
-const addEvListenerToAuthorization = () => {
-    document.getElementById('logInBtn').addEventListener('click', handlerLoginBtn);
-    document.getElementById('logOutBtn').addEventListener('click', handlerLogOutBtn);
-    document.getElementById('loginForm').addEventListener ('submit', handlerSubmitAuthForm);
-    document.getElementById('emailInput').addEventListener('input', handlerEmailInput);
-    document.getElementById('passwordInput').addEventListener('input', handlerPasswordInput);
-    document.getElementById('seePassword').addEventListener('click', handlerVisibilityPassw);
-}
-
-const removeEvListenerFromAuthorization = () => {
-    document.getElementById('logInBtn').removeEventListener('click', handlerLoginBtn);
-    document.getElementById('loginForm').removeEventListener ('submit', handlerSubmitAuthForm);
-    document.getElementById('emailInput').removeEventListener('input', handlerEmailInput);
-    document.getElementById('passwordInput').removeEventListener('input', handlerPasswordInput);
-    document.getElementById('seePassword').removeEventListener('click', handlerVisibilityPassw);
-}
-
-//main app
-
-renderHeaderNode();
-renderMainSectionNode();
-renderAuthorizationNode();
-renderFooterNode();
-checkLoginStatus();
-addEvListenerToAuthorization();
