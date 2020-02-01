@@ -71,6 +71,10 @@ footer {
   text-align: center;
 }
 
+th {
+  cursor: pointer;
+}
+
 .th-cols-flat:after {
   content: '  \2192';
 }
@@ -81,8 +85,6 @@ footer {
 
 .th-cols-up:after {
   content: '  \2191';
-} */
+} 
 
-th {
-  cursor: pointer;
-}
+

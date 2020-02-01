@@ -20,6 +20,9 @@ const stuff = [
     { id: 10, fullName: 'Mia Morris', position: 'Owner', skill: '-', exp: 10, sex: 'Famale', salary: 10000},
 ];
 
+const columns = ['ID', 'Full Name', 'Position', 'Tech', 'Exp', 'Sex', 'Salary'];
+const slug = text => text.trim().split(' ').map(el => el.toLowerCase()).join('-');
+
 // render DOM
 const createHTMLNode = (tag, attrs, inner) => {
     const element = document.createElement(tag);
@@ -92,11 +95,6 @@ const renderMessageAuthorizationNode = () => {
     document.getElementById('outputAuthorization').appendChild(message);
 }
 
-const columns = ['ID', 'Full Name', 'Position', 'Tech', 'Exp', 'Sex', 'Salary'];
-const slug = text => text.trim().split(' ').map(el => el.toLowerCase()).join('-');
-
-//th-cols-up
-
 const renderTableNode = (headCols, dataRows) => {
     document.getElementById('outputData').innerHTML = '';
     const trHead = createHTMLNode('tr', [], null);
@@ -165,87 +163,106 @@ const checkLoginStatus = () => {
     }
 }
 
-
 //sorting functions
 
+const changeArrowInSortedTh = (el, key) => {
+    document.getElementById(el).classList.remove('th-cols-flat');
+    key ? document.getElementById(el).classList.add('th-cols-down') : document.getElementById(el).classList.add('th-cols-up') ;
+}
+
 const idHandleClick = () => {
-    stuff.sort((a,b) => (stuff[0].id > stuff[1].id) ? a.id - b.id : b.id - a.id);
-    removeEvListenerFromTable()
+    const flag = (stuff[0].id > stuff[1].id);
+    stuff.sort((a,b) => flag ? a.id - b.id : b.id - a.id);
+    removeEvListenerFromTable();
     renderTableNode(columns, stuff);
     addEvListenerToTable();
+    changeArrowInSortedTh('id', flag)
 }
 
 const fullNameHandleClick = () => {
+    const flag = (stuff[0].fullName > stuff[stuff.length - 1].fullName);
+    console.log(flag)
     stuff.sort((a,b) => {
-        if (stuff[0].fullName < stuff[stuff.length - 1].fullName) {
+        if (flag) {
+            return a.fullName.toLowerCase() < b.fullName.toLowerCase() ? -1 : a.fullName.toLowerCase() > b.fullName.toLowerCase() ? 1 : 0;  
+        }
+        else {
             return a.fullName.toLowerCase() < b.fullName.toLowerCase() ? 1 : a.fullName.toLowerCase() > b.fullName.toLowerCase() ? -1 : 0;
         }
-        else {
-            return a.fullName.toLowerCase() < b.fullName.toLowerCase() ? -1 : a.fullName.toLowerCase() > b.fullName.toLowerCase() ? 1 : 0;
-        }
     });
     removeEvListenerFromTable();
     renderTableNode(columns, stuff);
     addEvListenerToTable();
-}
-
-const genderHandleClick = () => {
-    stuff.sort((a,b) => {
-        if (stuff[0].sex < stuff[stuff.length - 1].sex) {
-            return a.sex.toLowerCase() < b.sex.toLowerCase() ? 1 : a.sex.toLowerCase() > b.sex.toLowerCase() ? -1 : 0;
-        }
-        else {
-            return a.sex.toLowerCase() < b.sex.toLowerCase() ? -1 : a.sex.toLowerCase() > b.sex.toLowerCase() ? 1 : 0;
-        }
-    });
-    removeEvListenerFromTable();
-    renderTableNode(columns, stuff);
-    addEvListenerToTable();
+    changeArrowInSortedTh('full-name', flag)
 }
 
 const positionHandleClick = () => {
+    const flag = (stuff[0].position > stuff[stuff.length - 1].position);
     stuff.sort((a,b) => {
-        if (stuff[0].position < stuff[stuff.length - 1].position) {
-            return a.position.toLowerCase() < b.position.toLowerCase() ? 1 : a.position.toLowerCase() > b.position.toLowerCase() ? -1 : 0;
+        if (flag) {
+            return a.position.toLowerCase() < b.position.toLowerCase() ? -1 : a.position.toLowerCase() > b.position.toLowerCase() ? 1 : 0;
         }
         else {
-            return a.position.toLowerCase() < b.position.toLowerCase() ? -1 : a.position.toLowerCase() > b.position.toLowerCase() ? 1 : 0;
+            return a.position.toLowerCase() < b.position.toLowerCase() ? 1 : a.position.toLowerCase() > b.position.toLowerCase() ? -1 : 0;
         }
     });
     removeEvListenerFromTable();
     renderTableNode(columns, stuff);
     addEvListenerToTable();
+    changeArrowInSortedTh('position', flag);
+}
+
+const genderHandleClick = () => {
+    const flag = (stuff[0].sex > stuff[stuff.length - 1].sex);
+    stuff.sort((a,b) => {
+        if (flag) {
+            return a.sex.toLowerCase() < b.sex.toLowerCase() ? -1 : a.sex.toLowerCase() > b.sex.toLowerCase() ? 1 : 0;
+        }
+        else {
+            return a.sex.toLowerCase() < b.sex.toLowerCase() ? 1 : a.sex.toLowerCase() > b.sex.toLowerCase() ? -1 : 0;
+        }
+    });
+    removeEvListenerFromTable();
+    renderTableNode(columns, stuff);
+    addEvListenerToTable();
+    changeArrowInSortedTh('sex', flag);
 }
 
 const techHandleClick = () => {
+    const flag = (stuff[0].skill > stuff[stuff.length - 1].skill);
     stuff.sort((a,b) => {
-        if (stuff[0].skill < stuff[stuff.length - 1].skill) {
-            return a.skill.toLowerCase() < b.skill.toLowerCase() ? 1 : a.skill.toLowerCase() > b.skill.toLowerCase() ? -1 : 0;
+        if (flag) {
+            return a.skill.toLowerCase() < b.skill.toLowerCase() ? -1 : a.skill.toLowerCase() > b.skill.toLowerCase() ? 1 : 0;
         }
         else {
-            return a.skill.toLowerCase() < b.skill.toLowerCase() ? -1 : a.skill.toLowerCase() > b.skill.toLowerCase() ? 1 : 0;
+            return a.skill.toLowerCase() < b.skill.toLowerCase() ? 1 : a.skill.toLowerCase() > b.skill.toLowerCase() ? -1 : 0;
         }
     });
     removeEvListenerFromTable();
     renderTableNode(columns, stuff);
     addEvListenerToTable();
+    changeArrowInSortedTh('tech', flag);
 }
 
 const expHandleClick = () => {
-    stuff.sort((a,b) => (stuff[0].exp > stuff[1].exp) ? a.exp - b.exp : b.exp - a.exp);
+    const flag = (stuff[0].exp > stuff[1].exp);
+    stuff.sort((a,b) => (flag) ? a.exp - b.exp : b.exp - a.exp);
     removeEvListenerFromTable();
     renderTableNode(columns, stuff);
     addEvListenerToTable();
+    changeArrowInSortedTh('exp', flag);
 }
 
 const salaryHandleClick = () => {
-    stuff.sort((a,b) => (stuff[0].salary > stuff[1].salary) ? a.salary - b.salary : b.salary - a.salary);
+    const flag = (stuff[0].salary > stuff[1].salary);
+    stuff.sort((a,b) => flag ? a.salary - b.salary : b.salary - a.salary);
     removeEvListenerFromTable();
     renderTableNode(columns, stuff);
     addEvListenerToTable();
+    changeArrowInSortedTh('salary', flag);
 }
 
-function addEvListenerToTable () {
+const addEvListenerToTable = () => {
     document.getElementById('id').addEventListener('click', idHandleClick);
     document.getElementById('full-name').addEventListener('click', fullNameHandleClick);
     document.getElementById('position').addEventListener('click', positionHandleClick);
@@ -255,7 +272,7 @@ function addEvListenerToTable () {
     document.getElementById('salary').addEventListener('click', salaryHandleClick);
 }
 
-function removeEvListenerFromTable () {
+const removeEvListenerFromTable = () => {
     document.getElementById('id').removeEventListener('click', idHandleClick);
     document.getElementById('full-name').removeEventListener('click', fullNameHandleClick);
     document.getElementById('position').removeEventListener('click', positionHandleClick);
@@ -264,18 +281,6 @@ function removeEvListenerFromTable () {
     document.getElementById('sex').removeEventListener('click', genderHandleClick);
     document.getElementById('salary').removeEventListener('click', salaryHandleClick);
 }
-
-
-
-////////////////////////////////////
-
-
-// const addEvListenerToTable = () => {
-//     const id = document.getElementById('id');
-//     const salary = document.getElementById('salary');
-//     id.addEventListener('click', handleIdClick);
-//     salary.addEventListener('click', handleSalaryClick);
-// }
 
 //main app
 
